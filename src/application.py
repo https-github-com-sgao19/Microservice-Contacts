@@ -24,25 +24,25 @@ def test_flask():
     return rsp
 
 
-@app.put("/api/students/<uni>")
-def post_student(uni):
+@app.put("/api/contacts/<uni>")
+def post_contact(uni):
     params = request.args
     ColumbiaStudentResource.update_by_key(uni, params)
-    return get_student_by_uni(uni)
+    return get_contact_by_uni(uni)
 
 
-@app.post("/api/students")
-def put_student():
+@app.post("/api/contacts")
+def put_contact():
     params = request.args
     try:
         ColumbiaStudentResource.insert_by_key(params)
     except:
         return Response("Insert Failure", status=404, content_type="text/plain")
-    return get_student_by_uni(params["guid"])
+    return get_contact_by_uni(params["cid"])
 
 
-@app.delete("/api/students/<uni>")
-def delete_student(uni):
+@app.delete("/api/contacts/<uni>")
+def delete_contact(uni):
     ColumbiaStudentResource.delete_by_key(uni)
     return ColumbiaStudentResource.get_by_key(uni)
 
@@ -62,8 +62,8 @@ def get_health():
     return result
 
 
-@app.route("/api/students/<uni>", methods=["GET"])
-def get_student_by_uni(uni):
+@app.route("/api/contacts/<uni>", methods=["GET"])
+def get_contact_by_uni(uni):
 
     result = ColumbiaStudentResource.get_by_key(uni)
 

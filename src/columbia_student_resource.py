@@ -20,7 +20,7 @@ class ColumbiaStudentResource:
 
     @staticmethod
     def get_by_key(key):
-        sql = "SELECT * FROM f22_databases.columbia_students where guid=%s";
+        sql = "SELECT * FROM contacts.contacts where uni=%s";
         conn = ColumbiaStudentResource._get_connection()
         cur = conn.cursor()
         cur.execute(sql, args=key)
@@ -29,43 +29,39 @@ class ColumbiaStudentResource:
         return result
 
     @staticmethod
-    def update_by_key(uni, student):
+    def update_by_key(uni, contact):
         conn = ColumbiaStudentResource._get_connection()
         cur = conn.cursor()
         content = []
-        if "first_name" in student:
-            content.append("first_name = \"" + student["first_name"] + "\"")
-        if "last_name" in student:
-            content.append("last_name = \"" + student["last_name"] + "\"")
-        if "middle_name" in student:
-            content.append("middle_name = \"" + student["middle_name"] + "\"")
-        if "email" in student:
-            content.append("email = \"" + student["email"] + "\"")
-        if "school_code" in student:
-            content.append("school_code = \"" + student["school_code"] + "\"")
-        #sql = "UPDATE f22_databases.columbia_students SET " + ", ".join(content) + " WHERE guid = \"" + uni + "\""
-        #print(sql)
-        sql = "UPDATE f22_databases.columbia_students SET " + ", ".join(content) + " WHERE guid = %s"
+        if "name" in contact:
+            content.append("name = \"" + contact["name"] + "\"")
+        if "email" in contact:
+            content.append("email = \"" + contact["email"] + "\"")
+        if "phone" in contact:
+            content.append("phone = \"" + contact["phone"] + "\"")
+        if "address" in contact:
+            content.append("address = \"" + contact["address"] + "\"")
+
+        sql = "UPDATE contacts.contacts SET " + ", ".join(content) + " WHERE uni = %s"
         res = cur.execute(sql, args=uni)
         result = cur.fetchone()
 
         return result
 
     @staticmethod
-    def insert_by_key(student):
+    def insert_by_key(contact):
         conn = ColumbiaStudentResource._get_connection()
         cur = conn.cursor()
-        if "guid" not in student:
-            raise ValueError("No guid")
-        guid = student["guid"] if "guid" in student else ""
-        first_name = student["first_name"] if "first_name" in student else ""
-        last_name = student["last_name"] if "last_name" in student else ""
-        middle_name = student["middle_name"] if "middle_name" in student else ""
-        email = student["email"] if "email" in student else ""
-        school_code = student["school_code"] if "school_code" in student else ""
-        sql = "INSERT INTO f22_databases.columbia_students (guid, last_name, first_name, middle_name, email, " \
-              "school_code) VALUES (%s, %s, %s, %s, %s, %s)"
-        cur.execute(sql, args=(guid, first_name, last_name, middle_name, email, school_code))
+        if "uni" not in contact:
+            raise ValueError("No UNI")
+        uni = contact["uni"] if "uni" in contact else ""
+        name = contact["name"] if "name" in contact else ""
+        email = contact["email"] if "email" in contact else ""
+        phone = contact["phone"] if "phone" in contact else ""
+        address = contact["address"] if "address" in contact else ""
+        sql = "INSERT INTO contacts.contacts (uni, name, email, phone, address) " \
+              "VALUES (%s, %s, %s, %s, %s)"
+        cur.execute(sql, args=(uni, name, email, phone, address))
         result = cur.fetchone()
 
         return result
@@ -74,6 +70,6 @@ class ColumbiaStudentResource:
     def delete_by_key(uni):
         conn = ColumbiaStudentResource._get_connection()
         cur = conn.cursor()
-        sql = "DELETE FROM f22_databases.columbia_students WHERE guid = %s"
+        sql = "DELETE FROM contacts.contacts WHERE uni = %s"
         cur.execute(sql, args=uni)
         return
