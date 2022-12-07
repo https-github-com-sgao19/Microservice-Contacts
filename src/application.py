@@ -79,6 +79,6 @@ def get_contact_by_uni(uni):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5012)
+    app.run(host="0.0.0.0", port=5011)
     # test visibility
 
