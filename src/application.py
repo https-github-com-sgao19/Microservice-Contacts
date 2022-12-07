@@ -24,14 +24,14 @@ def test_flask():
     return rsp
 
 
-@app.put("/api/contacts/<uni>")
+@app.put("/contacts/<uni>")
 def post_contact(uni):
     params = request.form
     ColumbiaStudentResource.update_by_key(uni, params)
     return get_contact_by_uni(uni)
 
 
-@app.post("/api/contacts")
+@app.post("/contacts")
 def put_contact():
     print("post")
     body = request.form
@@ -44,13 +44,13 @@ def put_contact():
     return get_contact_by_uni(body["uni"])
 
 
-@app.delete("/api/contacts/<uni>")
+@app.delete("/contacts/<uni>")
 def delete_contact(uni):
     ColumbiaStudentResource.delete_by_key(uni)
     return Response("Delete Success")
 
 
-@app.get("/api/health")
+@app.get("/health")
 def get_health():
     t = str(datetime.now())
     msg = {
@@ -65,7 +65,7 @@ def get_health():
     return result
 
 
-@app.route("/api/contacts/<uni>", methods=["GET"])
+@app.route("/contacts/<uni>", methods=["GET"])
 def get_contact_by_uni(uni):
 
     result = ColumbiaStudentResource.get_by_key(uni)
