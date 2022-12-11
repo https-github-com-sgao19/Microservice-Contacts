@@ -26,7 +26,7 @@ def test_flask():
 
 @app.put("/contacts/<uni>")
 def post_contact(uni):
-    params = request.form
+    params = request.json
     ColumbiaStudentResource.update_by_key(uni, params)
     return get_contact_by_uni(uni)
 
@@ -48,21 +48,6 @@ def put_contact():
 def delete_contact(uni):
     ColumbiaStudentResource.delete_by_key(uni)
     return Response("Delete Success")
-
-
-@app.get("/health")
-def get_health():
-    t = str(datetime.now())
-    msg = {
-        "name": "F22-Starter-Microservice",
-        "health": "Good",
-        "at time": t
-    }
-
-    # DFF TODO Explain status codes, content type, ... ...
-    result = Response(json.dumps(msg), status=200, content_type="application/json")
-
-    return result
 
 
 @app.route("/contacts/<uni>", methods=["GET"])
