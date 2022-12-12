@@ -22,11 +22,9 @@ class ColumbiaStudentResource:
     def get_by_params(params):
         limit, offset = 10, 0
         if "limit" in params:
-            limit = params["limit"]
-            params.pop("limit")
+            limit = int(params["limit"])
         if "page" in params:
-            offset = (params["page"] - 1) * limit
-            params.pop("page")
+            offset = (int(params["page"]) - 1) * limit
         where_clause = []
         where_params = []
         if "uni" in params:
@@ -46,8 +44,8 @@ class ColumbiaStudentResource:
             where_params.append(params["address"])
         conn = ColumbiaStudentResource()._get_connection()
         cur = conn.cursor()
-        if not params:
-            sql = "SELECT * FROM contacts.contacts LIMIT %s OFFSET %s"
+        if not where_params:
+            sql = "SELECT * FROM contacts.contacts LIMIT %d OFFSET %d"
             cur.execute(sql, (limit, offset))
         else:
             sql = "SELECT * FROM contacts.contacts WHERE " + " AND ".join(where_clause) + " LIMIT %s OFFSET %s"
