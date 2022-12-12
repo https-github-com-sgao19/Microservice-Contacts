@@ -45,7 +45,7 @@ class ColumbiaStudentResource:
         conn = ColumbiaStudentResource()._get_connection()
         cur = conn.cursor()
         if not where_params:
-            sql = "SELECT * FROM contacts.contacts LIMIT %d OFFSET %d"
+            sql = "SELECT * FROM contacts.contacts LIMIT %s OFFSET %s"
             cur.execute(sql, (limit, offset))
         else:
             sql = "SELECT * FROM contacts.contacts WHERE " + " AND ".join(where_clause) + " LIMIT %s OFFSET %s"
