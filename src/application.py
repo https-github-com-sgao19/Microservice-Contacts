@@ -1,5 +1,4 @@
 from flask import Flask, Response, request, make_response
-from datetime import datetime
 import json
 from columbia_student_resource import ColumbiaStudentResource
 from flask_cors import CORS
@@ -10,33 +9,16 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route("/test", methods=["GET", "POST"])
-def test_flask():
-    if request.method == "POST":
-        msg = {1: "test POST"}
-        rsp = Response(json.dumps(msg), status=404, content_type="application/json")
-    else:
-        msg = {2: "test GET"}
-        rsp = make_response(msg)
-        rsp.status = 404
-        rsp.headers['customHeader'] = 'This is a custom header'
-
-    return rsp
-
-
 @app.put("/contacts/<uni>")
 def post_contact(uni):
-    params = request.json
-    ColumbiaStudentResource.update_by_key(uni, params)
+    body = request.json
+    ColumbiaStudentResource.update_by_key(uni, body)
     return get_contact_by_uni(uni)
 
 
 @app.post("/contacts")
 def put_contact():
-    print("post")
-    body = request.form
-    print("post")
-    print(body)
+    body = request.json
     try:
         ColumbiaStudentResource.insert_by_key(body)
     except:
@@ -50,9 +32,20 @@ def delete_contact(uni):
     return Response("Delete Success")
 
 
+@app.get("/contacts")
+def get_contact_by_template():
+    params = request.args
+    result = ColumbiaStudentResource.get_by_params(params)
+    if result:
+        rsp = Response(json.dumps(result), status=200, content_type="application.json")
+    else:
+        rsp = Response("NOT FOUND", status=404, content_type="text/plain")
+
+    return rsp
+
+
 @app.route("/contacts/<uni>", methods=["GET"])
 def get_contact_by_uni(uni):
-
     result = ColumbiaStudentResource.get_by_key(uni)
 
     if result:
@@ -65,5 +58,3 @@ def get_contact_by_uni(uni):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5011)
-    # test visibility
-

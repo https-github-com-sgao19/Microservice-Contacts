@@ -19,12 +19,52 @@ class ColumbiaStudentResource:
         return conn
 
     @staticmethod
+    def get_by_params(params):
+        limit, offset = 10, 0
+        if "limit" in params:
+            limit = params["limit"]
+            params.pop("limit")
+        if "page" in params:
+            offset = (params["page"] - 1) * limit
+            params.pop("page")
+        where_clause = []
+        where_params = []
+        if "uni" in params:
+            where_clause.append("uni=%s")
+            where_params.append(params["uni"])
+        if "name" in params:
+            where_clause.append("name=%s")
+            where_params.append(params["name"])
+        if "email" in params:
+            where_clause.append("email=%s")
+            where_params.append(params["email"])
+        if "phone" in params:
+            where_clause.append("phone=%s")
+            where_params.append(params["phone"])
+        if "address" in params:
+            where_clause.append("address=%s")
+            where_params.append(params["address"])
+        conn = ColumbiaStudentResource()._get_connection()
+        cur = conn.cursor()
+        if not params:
+            sql = "SELECT * FROM contacts.contacts LIMIT %s OFFSET %s"
+            cur.execute(sql, (limit, offset))
+        else:
+            sql = "SELECT * FROM contacts.contacts WHERE " + " AND ".join(where_clause) + " LIMIT %s OFFSET %s"
+            cur.execute(sql, where_params + [limit, offset])
+        result = cur.fetchall()
+        conn.close()
+        return result
+
+
+    @staticmethod
     def get_by_key(key):
         sql = "SELECT * FROM contacts.contacts where uni=%s";
         conn = ColumbiaStudentResource._get_connection()
         cur = conn.cursor()
         cur.execute(sql, args=key)
         result = cur.fetchone()
+        conn.close()
 
         return result
 
@@ -45,6 +85,7 @@ class ColumbiaStudentResource:
         sql = "UPDATE contacts.contacts SET " + ", ".join(content) + " WHERE uni = %s"
         res = cur.execute(sql, args=uni)
         result = cur.fetchone()
+        conn.close()
 
         return result
 
@@ -63,6 +104,7 @@ class ColumbiaStudentResource:
               "VALUES (%s, %s, %s, %s, %s)"
         cur.execute(sql, args=(uni, name, email, phone, address))
         result = cur.fetchone()
+        conn.close()
 
         return result
 
@@ -72,4 +114,5 @@ class ColumbiaStudentResource:
         cur = conn.cursor()
         sql = "DELETE FROM contacts.contacts WHERE uni = %s"
         cur.execute(sql, args=uni)
+        conn.close()
         return
